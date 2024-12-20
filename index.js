@@ -6,8 +6,10 @@ const connectMongoDB = require("./config/dbconfig");
 
 const app = express();
 connectMongoDB();
-const PORT = 4120;
+const PORT = process.env.PORT || 4120;
 
+
+app.use(express.json());
 
 app.get('/', (req, res) => {
     res.send("Hello");
