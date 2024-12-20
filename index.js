@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
+const userRoute = require("./routes/user");
 const connectMongoDB = require("./config/dbconfig");
 
 const app = express();
@@ -10,6 +11,9 @@ const PORT = process.env.PORT || 4120;
 
 
 app.use(express.json());
+
+app.use('/api/user', userRoute);
+
 
 app.get('/', (req, res) => {
     res.send("Hello");
