@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-
+const cors = require('cors');
 const userRoute = require("./routes/user");
 const connectMongoDB = require("./config/dbconfig");
 
@@ -9,6 +9,7 @@ const app = express();
 connectMongoDB();
 const PORT = process.env.PORT || 4120;
 
+app.use(cors());
 app.use(express.json());
 
 app.use('/api/user', userRoute);
