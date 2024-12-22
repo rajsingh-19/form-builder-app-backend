@@ -13,8 +13,10 @@ app.use(cors());                // Enabling Cross-Origin Resource Sharing
 app.use(express.json());        // Middleware to parse JSON bodies in requests
 
 const PORT = process.env.PORT || 4120;      // Defining the port for the server, defaulting to 4120 if not set in .env
+
 // Defining a route for user-related operations, prefixed with /api/use
 app.use('/api/user', userRoute);
+
 // Defining a simple root route for the application
 app.get('/', (req, res) => {
     res.send("Hello");
