@@ -9,11 +9,9 @@ const app = express();
 connectMongoDB();
 const PORT = process.env.PORT || 4120;
 
-
 app.use(express.json());
 
 app.use('/api/user', userRoute);
-
 
 app.get('/', (req, res) => {
     res.send("Hello");
