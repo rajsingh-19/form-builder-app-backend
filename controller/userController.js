@@ -3,9 +3,9 @@ const bcrypt = require('bcrypt');
 
 // Update user settings
 const updateUser = async (req, res) => {
-    const { userName, email, oldPassword, newPassword } = req.body;
-    const userId = req.user.id;
-
+    const { userName, email, oldPassword, newPassword } = req.body;     // Extract the username, email old and new password from request body
+    const userId = req.user.id;                         // Get the user ID from the authenticated user (stored in req.user)
+    //      Try Catch block for error handling
     try {
         const user = await UserModel.findById(userId);
         if (!user) {

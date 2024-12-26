@@ -2,8 +2,11 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
+//          import the routes
 const authRoute = require("./routes/authRoute");
 const userSettingsRoute = require('./routes/userRoute');
+const folderRoute = require("./routes/folderRoute");
+//          import the db configuration
 const connectMongoDB = require("./config/dbconfig");
 
 const app = express();          // Creating an Express application instance
@@ -18,6 +21,7 @@ const PORT = process.env.PORT || 4120;      // Defining the port for the server,
 // Defining a route for user-related operations, prefixed with /api/use
 app.use('/api/auth', authRoute);            // Auth user routes
 app.use('/api/user', userSettingsRoute);    // user update routes
+app.use('/api/folder', folderRoute);        // Folder routes
 
 // Defining a simple root route for the application
 app.get('/', (req, res) => {
