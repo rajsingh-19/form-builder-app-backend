@@ -2,13 +2,13 @@ const FolderModel = require('../models/folder.schema');
 
 //              Create a new folder
 const createFolder = async (req, res) => {
-    const { name } = req.body;          // Extract folder name from request body
+    const { folderTitle } = req.body;          // Extract folder name from request body
     const userId = req.user.id;         // Get the user ID from the authenticated user (stored in req.user)
     //          Try Catch block for error handling 
     try {
         // Create a new folder document in the database with the user's ID and the folder name
         const newFolder = new FolderModel({
-            name,
+            folderTitle,
             userId
         });
         // Save the new folder to the database
