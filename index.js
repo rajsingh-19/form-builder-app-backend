@@ -2,8 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
-const userRoute = require("./routes/userRoute");
-const dashboardRoute = require("./routes/dashboardRoute");
+const authRoute = require("./routes/authRoute");
+const userSettingsRoute = require('./routes/userRoute');
 const connectMongoDB = require("./config/dbconfig");
 
 const app = express();          // Creating an Express application instance
@@ -16,9 +16,8 @@ app.use(express.json());        // Middleware to parse JSON bodies in requests
 const PORT = process.env.PORT || 4120;      // Defining the port for the server, defaulting to 4120 if not set in .env
 
 // Defining a route for user-related operations, prefixed with /api/use
-app.use('/api/user', userRoute);
-// Defining a route for dashboard operations, prefixed with /api/dashboard
-app.use('/api/dashboard', dashboardRoute);
+app.use('/api/auth', authRoute);            // Auth user routes
+app.use('/api/user', userSettingsRoute);    // user update routes
 
 // Defining a simple root route for the application
 app.get('/', (req, res) => {

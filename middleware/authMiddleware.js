@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const verifyUser = async (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
     //              get the token from the cookies or req.header.authorization
     const token = req.headers.authorization;
     //              check if the token is present or not
@@ -22,4 +22,4 @@ const verifyUser = async (req, res, next) => {
     }
 };
 
-module.exports = verifyUser;
+module.exports = authMiddleware;

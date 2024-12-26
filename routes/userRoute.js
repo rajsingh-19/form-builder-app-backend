@@ -1,17 +1,10 @@
-const express = require("express");
+const express = require('express');
+const updateUser = require("../controller/userController");        // Import the controller
+const authMiddleware = require('../middleware/authMiddleware');        // Middleware for authentication
+
 const router = express.Router();
-const dotenv = require("dotenv");
-const verifiedUser = require("../middleware/auth");
-// Importing controllers
-const { registerHandler, loginHandler, updateUserHandler } = require("../controller/userController");
 
-// Configuring dotenv to load environment variables
-dotenv.config();        // Load .env file variables into process.env
+// Route for updating user settings (name, email or password)
+router.put('/update', authMiddleware, updateUser);
 
-// Defining routes
-router.post('/register', registerHandler);      // POST route for user registration, handled by registerHandler
-router.post('/login', loginHandler);            // POST route for user login, handled by loginHandler
-router.put('/settings', verifiedUser, updateUserHandler);        //PUT route for updating the user
-
-// Exporting the router to use in other parts of the application
 module.exports = router;
