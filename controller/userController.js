@@ -3,8 +3,19 @@ const bcrypt = require('bcrypt');
 
 // Update user settings
 const updateUser = async (req, res) => {
-    const { userName, email, password, oldPassword, newPassword } = req.body;     // Extract the username, email old and new password from request body
+    const { userName, email, oldPassword, newPassword } = req.body;     // Extract the username, email old and new password from request body
     const userId = req.user.id;                         // Get the user ID from the authenticated user (stored in req.user)
+
+    // Check for unexpected keys
+    const allowedFields = ['userName', 'email', 'oldPassword', 'newPassword'];
+    const requestFields = Object.keys(req.body);
+
+    // If the request contains any field other than the allowed fields, return an error
+    const invalidFields = requestFields.filter(field => !allowedFields.includes(field));
+    if (invalidFields.length > 0) {
+        return res.status(400).json({ message: `Invalid fields: ${invalidFields.join(', ')}` });
+    }
+
     //      Try Catch block for error handling
     try {
         const user = await UserModel.findById(userId);
@@ -21,15 +32,6 @@ const updateUser = async (req, res) => {
         if (email) {
             user.email = email;
         }
-
-        if (password && (!oldPassword || !newPassword)) {
-            return res.status(400).json({ message: 'Please provide both old and new password to change your password' });
-        }
-        
-        // // If newPassword is provided, oldPassword must also be provided
-        // if (newPassword && !oldPassword) {
-        //     return res.status(400).json({ message: 'Old password is required when changing the password' });
-        // }
 
         // Update password if both oldPassword and newPassword are provided
         if (oldPassword && newPassword) {
