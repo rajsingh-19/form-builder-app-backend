@@ -6,6 +6,7 @@ const cors = require("cors");
 const authRoute = require("./routes/authRoute");
 const userSettingsRoute = require('./routes/userRoute');
 const folderRoute = require("./routes/folderRoute");
+const formRoute = require("./routes/formRoute");
 //          import the db configuration
 const connectMongoDB = require("./config/dbconfig");
 
@@ -22,6 +23,7 @@ const PORT = process.env.PORT || 4120;      // Defining the port for the server,
 app.use('/api/auth', authRoute);            // Auth user routes
 app.use('/api/user', userSettingsRoute);    // user update routes
 app.use('/api/folder', folderRoute);        // Folder routes
+app.use('/api/form', formRoute);            // Form routes
 
 // Defining a simple root route for the application
 app.get('/', (req, res) => {
