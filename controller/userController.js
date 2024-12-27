@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 
 // Update user settings
 const updateUser = async (req, res) => {
-    const { userName, email, oldPassword, newPassword } = req.body;     // Extract the username, email old and new password from request body
+    const { userName, email, password, oldPassword, newPassword } = req.body;     // Extract the username, email old and new password from request body
     const userId = req.user.id;                         // Get the user ID from the authenticated user (stored in req.user)
     //      Try Catch block for error handling
     try {
@@ -21,6 +21,15 @@ const updateUser = async (req, res) => {
         if (email) {
             user.email = email;
         }
+
+        if (password && (!oldPassword || !newPassword)) {
+            return res.status(400).json({ message: 'Please provide both old and new password to change your password' });
+        }
+        
+        // // If newPassword is provided, oldPassword must also be provided
+        // if (newPassword && !oldPassword) {
+        //     return res.status(400).json({ message: 'Old password is required when changing the password' });
+        // }
 
         // Update password if both oldPassword and newPassword are provided
         if (oldPassword && newPassword) {
