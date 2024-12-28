@@ -6,9 +6,7 @@ dotenv.config();
 
 const authMiddleware = async (req, res, next) => {
     const token = req.headers.authorization;
-    // Check if the Authorization header is present
-    // const token = req.heade("Authorization")?.replace("Bearer ", "");
-
+    
     //              check if the token is present or not
     if(!token) {
         res.json({status: false, message: "Authentication failed"});
