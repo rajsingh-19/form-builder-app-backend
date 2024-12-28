@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
-const FolderSchema = new mongoose.Schema({
+
+//          defining the folder schema
+const folderSchema = new mongoose.Schema({
     name: { 
         type: String, 
         required: true 
@@ -7,32 +9,39 @@ const FolderSchema = new mongoose.Schema({
     forms: [{ 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Form' 
-    }]
+    }]                  // Forms inside the folder
 });
 
-const DashboardSchema = new mongoose.Schema({
+//          defining the dashboard schema
+const dashboardSchema = new mongoose.Schema({
+    name: { 
+        type: String, 
+        required: true 
+    },
     owner: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'User', 
         required: true 
     },
-    collaborators: [
-        {
-            userId: { 
-                type: mongoose.Schema.Types.ObjectId, 
-                ref: 'User' 
-            },
-            accessMode: { 
-                type: String, 
-                enum: ['edit', 'readonly'], 
-                default: 'readonly' },
+    collaborators: [{
+        userId: { 
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'User' 
         },
-    ],
-    folders: [FolderSchema],
+        accessMode: { 
+            type: String, 
+            enum: ['edit', 'readonly'], 
+            required: true 
+        },
+    }],
+    folders: [folderSchema],                    // Folders inside the dashboard
     forms: [{ 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Form' 
-    }]
+    }]                                           // Forms outside folders
 });
 
-module.exports = mongoose.model('Dashboard', DashboardSchema);
+//          defining the model
+const DashboardModel = mongoose.model('dashboard', dashboardSchema);
+
+module.exports = DashboardModel;
