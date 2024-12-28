@@ -13,7 +13,7 @@ const checkAccess = (requiredMode) => {
 
             // Check if user is the owner
             if (dashboard.owner.toString() === userId) {
-                return next(); // Owners have full access
+                return next();              // Owners have full access
             }
 
             // Check collaborator permissions

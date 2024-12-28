@@ -1,17 +1,5 @@
 const mongoose = require('mongoose');
 
-//          defining the folder schema
-const folderSchema = new mongoose.Schema({
-    name: { 
-        type: String, 
-        required: true 
-    },
-    forms: [{ 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Form' 
-    }]                  // Forms inside the folder
-});
-
 //          defining the dashboard schema
 const dashboardSchema = new mongoose.Schema({
     name: { 
@@ -26,15 +14,26 @@ const dashboardSchema = new mongoose.Schema({
     collaborators: [{
         userId: { 
             type: mongoose.Schema.Types.ObjectId, 
-            ref: 'User' 
+            ref: 'User',
+            required: true
         },
         accessMode: { 
             type: String, 
-            enum: ['edit', 'readonly'], 
-            required: true 
+            enum: ['edit', 'view'], 
+            required: true, 
+            default: 'view'
         },
     }],
-    folders: [folderSchema],                    // Folders inside the dashboard
+    folders: [{
+        name: {
+            type: String,
+            required: true
+        },
+        forms: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Form'
+        }]
+    }],                      // Folders inside the dashboard
     forms: [{ 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Form' 
