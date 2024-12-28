@@ -42,6 +42,6 @@ const dashboardSchema = new mongoose.Schema({
 });
 
 //          defining the model
-const DashboardModel = mongoose.model('dashboard', dashboardSchema);
+const DashboardModel = mongoose.model('Dashboard', dashboardSchema);
 
 module.exports = DashboardModel;
