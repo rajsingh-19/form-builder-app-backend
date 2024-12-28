@@ -33,6 +33,11 @@ const updateUser = async (req, res) => {
             user.email = email;
         }
 
+        // Check if only `newPassword` is provided without `oldPassword`
+        if (newPassword && !oldPassword) {
+            return res.status(400).json({ message: 'Old password is required to set a new password' });
+        }
+
         // Update password if both oldPassword and newPassword are provided
         if (oldPassword && newPassword) {
             const isMatch = await bcrypt.compare(oldPassword, user.password);
