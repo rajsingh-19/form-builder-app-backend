@@ -3,10 +3,11 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
 //          import the routes
-const authRoute = require("./routes/authRoute");
-const userSettingsRoute = require('./routes/userRoute');
-const folderRoute = require("./routes/folderRoute");
-const formRoute = require("./routes/formRoute");
+const authRoutes = require("./routes/authRoute");
+const dashboardRoutes = require('./routes/dashboardRoute');
+// const userSettingsRoute = require('./routes/userRoute');
+// const folderRoute = require("./routes/folderRoute");
+// const formRoute = require("./routes/formRoute");
 //          import the db configuration
 const connectMongoDB = require("./config/dbconfig");
 
@@ -20,14 +21,26 @@ app.use(express.json());        // Middleware to parse JSON bodies in requests
 const PORT = process.env.PORT || 4120;      // Defining the port for the server, defaulting to 4120 if not set in .env
 
 // Defining a route for user-related operations, prefixed with /api/use
-app.use('/api/auth', authRoute);            // Auth user routes
-app.use('/api/user', userSettingsRoute);    // user update routes
-app.use('/api/folder', folderRoute);        // Folder routes
-app.use('/api/form', formRoute);            // Form routes
+app.use('/api/auth', authRoutes);            // Auth user routes
+app.use('/api/dashboard', dashboardRoutes);
+// app.use('/api/user', userSettingsRoute);    // user update routes
+// app.use('/api/folder', folderRoute);        // Folder routes
+// app.use('/api/form', formRoute);            // Form routes
 
 // Defining a simple root route for the application
 app.get('/', (req, res) => {
     res.send("Hello");
+});
+
+//      Handling Undefined Routes
+app.use("*", (req, res) => {
+    res.status(404).json({ message: "Route not found" });
+});
+
+//      Error Handling Middleware
+app.use((error, req, res, next) => {
+    console.log(error);
+    res.status(500).json({ errorMessage: "Something went wrong" });
 });
 
 //          wait for the db connection before starting the server

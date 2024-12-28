@@ -5,6 +5,7 @@ dotenv.config();
 const authMiddleware = async (req, res, next) => {
     //              get the token from the cookies or req.header.authorization
     const token = req.headers.authorization;
+    // const token = req.headers['authorization']?.split(' ')[1];
     //              check if the token is present or not
     if(!token) {
         return res.json({status: false, message: "Authentication failed"});
