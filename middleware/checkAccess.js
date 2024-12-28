@@ -1,5 +1,4 @@
 const Dashboard = require('../models/dashboard.schema');
-const UserModel = require('../models/user.schema');
 
 const checkAccess = (requiredMode) => {
     return async (req, res, next) => {
