@@ -1,5 +1,5 @@
-const UserModel = require('../models/user.schema');
 const bcrypt = require('bcrypt');
+const UserModel = require('../models/user.schema');
 
 // Update user settings
 const updateUser = async (req, res) => {

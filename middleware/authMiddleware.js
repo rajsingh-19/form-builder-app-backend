@@ -1,10 +1,12 @@
 const jwt = require('jsonwebtoken');
+const dotenv = require("dotenv");
 const UserModel = require('../models/user.schema');
 
+dotenv.config();
+
 const authMiddleware = async (req, res, next) => {
-    // const token = req.headers.authorization;
-    const token = req.header('Authorization').replace('Bearer ', '');
-    
+    const token = req.headers.authorization;
+
     //              check if the token is present or not
     if(!token) {
         return res.json({status: false, message: "Authentication failed"});
