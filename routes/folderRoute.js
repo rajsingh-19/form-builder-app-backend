@@ -1,5 +1,5 @@
 const express = require('express');
-const { createFolder, addFormToFolder } = require('../controller/folderController');
+const { createFolder, addFormToFolder, getFolders, deleteFolder } = require('../controller/folderController');
 const checkAccess = require('../middleware/checkAccess');
 const authMiddleware = require('../middleware/authMiddleware');
 

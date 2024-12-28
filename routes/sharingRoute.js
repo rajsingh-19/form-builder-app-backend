@@ -1,5 +1,5 @@
 const express = require('express');
-const shareDashboard = require('../controllers/sharingController');
+const shareDashboard = require('../controller/sharingController');
 const authMiddleware = require('../middleware/authMiddleware');
 
 const router = express.Router();

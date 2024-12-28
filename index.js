@@ -2,13 +2,13 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
-//          import the routes
+//          Import the routes
 const userRoutes = require("./routes/userRoute");
 const dashboardRoutes = require('./routes/dashboardRoute');
 const folderRoutes = require("./routes/folderRoute");
 const formRoutes = require("./routes/formRoute");
 const sharingRoutes = require('./routes/sharingRoute');
-//          import the db configuration
+//          Import the db configuration
 const connectMongoDB = require("./config/dbconfig");
 
 const app = express();          // Creating an Express application instance
@@ -20,24 +20,24 @@ app.use(express.json());        // Middleware to parse JSON bodies in requests
 
 const PORT = process.env.PORT || 4120;      // Defining the port for the server, defaulting to 4120 if not set in .env
 
-// Defining a route for user-related operations, prefixed with /api
+//          Defining all the api routes
 app.use('/api/auth', userRoutes);                       // Auth user routes
 app.use('/api/dashboards', dashboardRoutes);            // dashboard routes
 app.use('/api/folders', folderRoutes);                  // Folder routes
 app.use('/api/forms', formRoutes);                       // Form routes
 app.use('/api/sharing', sharingRoutes);                 // Sharing routes
 
-// Defining a simple root route for the application
+//          Defining a simple root route for the application
 app.get('/', (req, res) => {
     res.send("Hello");
 });
 
-//      Handling Undefined Routes
+//          Handling Undefined Routes
 app.use("*", (req, res) => {
     res.status(404).json({ message: "Route not found" });
 });
 
-//      Error Handling Middleware
+//          Error Handling Middleware
 app.use((error, req, res, next) => {
     console.log(error);
     res.status(500).json({ errorMessage: "Something went wrong" });
