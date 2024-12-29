@@ -54,7 +54,7 @@ const loginHandler = async (req, res) => {
     }
     //          create the JWT token with the payload, using a secret key from environment variables
     const token = jwt.sign(payload, process.env.JWT_SECRET);
-    return res.json({status: true, message: "Login Successfully", token: token});
+    return res.json({status: true, message: "Login Successfully", token: token, userId: isUserValid._id,});
 };
 
 module.exports = { registerHandler, loginHandler };
