@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
 //          defining the folder schema  
 const folderSchema = new mongoose.Schema({
-    folderTitle: { 
+    name: { 
         type: String, 
-        required: true 
+        required: true, 
+        unique: true
     },
     userId: {
         type: mongoose.Schema.Types.ObjectId, 

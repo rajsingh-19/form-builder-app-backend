@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 
 //          defining the form schema
 const formSchema = new mongoose.Schema({
+    name: { 
+        type: String, 
+        required: true, 
+        unique: true
+    },
     dashboardId: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Dashboard', 
