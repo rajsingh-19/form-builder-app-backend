@@ -1,5 +1,5 @@
 const Dashboard = require('../models/dashboard.schema');
-const User = require('../models/user.schema');
+const UserModel = require('../models/user.schema');
 const jwt = require('jsonwebtoken');
 
 // Create Dashboard
@@ -11,7 +11,7 @@ const createDashboard = async (req, res) => {
         const dashboard = new Dashboard({ name, owner: userId });
         await dashboard.save();
 
-        const user = await User.findById(userId);
+        const user = await UserModel.findById(userId);
         user.dashboards.push(dashboard._id);
         await user.save();
 
@@ -33,7 +33,7 @@ const getDashboardByUserId = async (req, res) => {
         }
 
         // Fetch the user details (owner of the dashboard)
-        const user = await User.findById(userId);
+        const user = await UserModel.findById(userId);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -84,7 +84,7 @@ const validateInviteLink = async (req, res) => {
         }
 
         // Fetch the user who owns the dashboard
-        const owner = await User.findById(userId);
+        const owner = await UserModel.findById(userId);
         if (!owner) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -114,7 +114,7 @@ const addCollaborator = async (req, res) => {
         }
 
         // Find the collaborator by email
-        const collaborator = await User.findOne({ email });
+        const collaborator = await UserModel.findOne({ email });
         if (!collaborator) {
             return res.status(404).json({ message: 'User not found' });
         }
