@@ -21,6 +21,33 @@ const createDashboard = async (req, res) => {
     }
 };
 
+// New method to fetch dashboard by userId
+const getDashboardByUserId = async (req, res) => {
+    const { userId } = req.params;  // Extract the userId from the URL parameter
+
+    try {
+        // Find the dashboard that matches the userId
+        const dashboard = await Dashboard.findOne({ owner: userId });
+        if (!dashboard) {
+            return res.status(404).json({ message: 'Dashboard not found for this user' });
+        }
+
+        // Fetch the user details (owner of the dashboard)
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Return the dashboard and user info (to display the name in navbar)
+        res.status(200).json({
+            dashboard,
+            userName: user.userName,  // Send the userName to display in the frontend
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching dashboard', error });
+    }
+};
+
 // Share Dashboard (Generate Invite Link)
 const shareDashboard = async (req, res) => {
     const { accessMode } = req.body; // 'edit' or 'readonly'
@@ -105,4 +132,4 @@ const addCollaborator = async (req, res) => {
     }
 };
 
-module.exports = { createDashboard, shareDashboard, validateInviteLink, addCollaborator };
+module.exports = { createDashboard, getDashboardByUserId, shareDashboard, validateInviteLink, addCollaborator };

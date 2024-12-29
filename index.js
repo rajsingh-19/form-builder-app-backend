@@ -22,9 +22,9 @@ const PORT = process.env.PORT || 4120;      // Defining the port for the server,
 
 //          Defining all the api routes
 app.use('/api/auth', userRoutes);                       // Auth user routes
-app.use('/api/dashboards', dashboardRoutes);            // dashboard routes
-app.use('/api/folders', folderRoutes);                  // Folder routes
-app.use('/api/forms', formRoutes);                       // Form routes
+app.use('/api/dashboard', dashboardRoutes);            // dashboard routes
+app.use('/api/folder', folderRoutes);                  // Folder routes
+app.use('/api/form', formRoutes);                       // Form routes
 app.use('/api/sharing', sharingRoutes);                 // Sharing routes
 
 //          Defining a simple root route for the application
