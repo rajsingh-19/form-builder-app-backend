@@ -6,6 +6,10 @@ const createFolder = async (req, res) => {
     const { userId, folderName } = req.body;          // Extract folder name and user Id from request body
     const { dashboardId } = req.params; // Extract dashboardId from the URL
     
+    if (!dashboardId) {
+        return res.status(400).json({ message: "Dashboard ID is required" });
+    };
+
     //          Try Catch block for error handling 
     try {
         // Find the dashboard by ID
