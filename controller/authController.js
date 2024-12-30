@@ -53,7 +53,7 @@ const loginHandler = async (req, res) => {
     const isUserValid = await UserModel.findOne({email});
     //          check if user is present or not
     if(!isUserValid) {
-        return res.status(401).json({message: "Credential is wrong"});
+        return res.status(401).json({message: "User does not exist"});
     }
     //          check if the password is same or not
     const isPasswordValid = await bcrypt.compare(password, isUserValid.password);
