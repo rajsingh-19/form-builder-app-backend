@@ -3,12 +3,12 @@ const FormModel = require('../models/form.schema');
 
 //              Create a new folder inside a dashboard
 const createFolder = async (req, res) => {
-    const { folderName } = req.body;          // Extract folder name from request body
+    const { userId, folderName } = req.body;          // Extract folder name and user Id from request body
     const { dashboardId } = req.params; // Extract dashboardId from the URL
-    const userId = req.user.id;         // Get the user ID from the authenticated user (stored in req.user)
     
     //          Try Catch block for error handling 
     try {
+        // Find the dashboard by ID
         const dashboard = await Dashboard.findById(dashboardId);
         if (!dashboard) {
             return res.status(404).json({ message: 'Dashboard not found' });
@@ -19,14 +19,20 @@ const createFolder = async (req, res) => {
             return res.status(403).json({ message: 'Access denied' });
         }
 
+        // Ensure folder name is unique within this dashboard
+        if (dashboard.folders.some(folder => folder.name === folderName)) {
+            return res.status(400).json({ message: 'Folder name must be unique' });
+        }
+
         // Create folder and add it to the dashboard
-        const newFolder = { name: folderName, forms: [] };
+        const newFolder = { name: folderName, userId, forms: [] };
         dashboard.folders.push(newFolder);
         await dashboard.save();
 
         res.status(201).json(newFolder);
     } catch (error) {
-        res.status(500).json({ message: 'Error creating folder', error });
+        console.error('Error creating folder:', error);
+        res.status(500).json({ message: 'Error creating folder', error:"error.message" });
     }
 };
 
