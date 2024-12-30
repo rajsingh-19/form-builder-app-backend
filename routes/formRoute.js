@@ -7,12 +7,12 @@ const router = express.Router();
 
 //          Routes for forms   
 // Route for creating forms
-router.post('/:dashboardId/form', authMiddleware, checkAccess('edit'), createForm);
+router.post('/:dashboardId/form', authMiddleware, createForm);
 
 // Route for fetching all forms for a dashboard
 router.get('/:dashboardId/forms', authMiddleware, getForms);
 
 // Route for deleting a form
-router.delete('/:formId', authMiddleware, checkAccess('edit'), deleteForm);     // Using formId consistently
+router.delete('/:formId', authMiddleware, deleteForm);     // Using formId consistently
 
 module.exports = router;

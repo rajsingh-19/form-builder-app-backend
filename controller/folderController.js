@@ -33,9 +33,6 @@ const createFolder = async (req, res) => {
         dashboard.folders.push(newFolder);
         await dashboard.save();
 
-        // Return the created folder, which will include the MongoDB-generated _id as a string
-        const createdFolder = dashboard.folders[dashboard.folders.length - 1];
-        res.status(201).json(createdFolder);
     } catch (error) {
         console.error('Error creating folder:', error);
         res.status(500).json({ message: 'Error creating folder', error:"error.message" });
