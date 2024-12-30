@@ -31,8 +31,11 @@ const createFolder = async (req, res) => {
         // Create folder and add it to the dashboard
         const newFolder = { name: folderName, userId, forms: [] };
         dashboard.folders.push(newFolder);
+        // Save the dashboard with the new folder
         await dashboard.save();
 
+        // Return the updated dashboard or the new folder as a response
+        res.status(201).json(newFolder); // Sends the new folder back to the client
     } catch (error) {
         console.error('Error creating folder:', error);
         res.status(500).json({ message: 'Error creating folder', error:"error.message" });
