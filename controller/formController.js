@@ -3,7 +3,8 @@ const Dashboard = require('../models/dashboard.schema');
 
 // Create Form
 const createForm = async (req, res) => {
-    const { name, dashboardId, bubbles, inputs } = req.body;
+    const { dashboardId } = req.params; // Extract dashboardId from the URL
+    const { formName, bubbles, inputs } = req.body;
 
     try {
         const dashboard = await Dashboard.findById(dashboardId);
@@ -11,7 +12,7 @@ const createForm = async (req, res) => {
             return res.status(404).json({ message: 'Dashboard not found' });
         }
 
-        const form = new FormModel({ name, dashboardId, bubbles, inputs });
+        const form = new FormModel({ name: formName, dashboardId, bubbles, inputs });
         await form.save();
 
         dashboard.forms.push(form._id); // Link the form to the dashboard
@@ -26,7 +27,6 @@ const createForm = async (req, res) => {
 // Get all forms for a dashboard
 const getForms = async (req, res) => {
     const { dashboardId } = req.params;
-
     try {
         const forms = await FormModel.find({ dashboardId });
         res.status(200).json(forms);
