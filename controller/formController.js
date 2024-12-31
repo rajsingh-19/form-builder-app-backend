@@ -17,18 +17,10 @@ const createForm = async (req, res) => {
             return res.status(404).json({ message: 'Dashboard not found' });
         }
 
-        // Check if the user is the owner of the dashboard
-        if (!mongoose.Types.ObjectId.isValid(userId)) {
-            return res.status(400).json({ message: 'Invalid userId' });
-        }
-
-        console.log('dashboard.owner:', dashboard.owner);
-        console.log('userId:', userId);
-
         // Check if the user is the owner or has edit access
-        if (dashboard.owner.toString() !== userId) {
-            return res.status(403).json({ message: 'Access denied' });
-        }
+        // if (dashboard.owner.toString() !== userId.toString()) {
+        //     return res.status(403).json({ message: 'Access denied' });
+        // }
 
         // Ensure form name is unique within this dashboard
         if (dashboard.forms.some(form => form.name === formName)) {
@@ -45,7 +37,7 @@ const createForm = async (req, res) => {
         res.status(201).json(form);     // Respond with the created form
     } catch (error) {
         console.error('Error creating form:', error);  // Log error
-        res.status(500).json({ message: 'Error creating form', error });
+        res.status(500).json({ message: 'Error creating form' });
     }
 };
 
