@@ -6,8 +6,8 @@ const createForm = async (req, res) => {
     const { formName } = req.body;
     const { dashboardId } = req.params; // Extract dashboardId from the URL
 
-    if (!dashboardId || !formName) {
-        return res.status(400).json({ message: 'Dashboard Id, form name are required' });
+    if (!dashboardId) {
+        return res.status(400).json({ message: 'Dashboard Id is required' });
     };
 
     try {
