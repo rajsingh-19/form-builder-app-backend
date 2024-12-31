@@ -35,8 +35,14 @@ const dashboardSchema = new mongoose.Schema({
         }]
     }],                      // Folders inside the dashboard
     forms: [{ 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Form' 
+        formId: { 
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'Form' 
+        },
+        formName: { 
+            type: String,
+            required:  true
+        }
     }]                                           // Forms outside folders
 });
 
