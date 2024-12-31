@@ -50,7 +50,10 @@ const getForms = async (req, res) => {
 // Delete a form by ID
 const deleteForm = async (req, res) => {
     const { formId } = req.params;
-
+    if(!formId) {
+        return res.status(404).json({ message: 'FormId not found' });
+    }
+    
     try {
         const form = await FormModel.findById(formId);
         if (!form) {
