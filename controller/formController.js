@@ -6,9 +6,13 @@ const createForm = async (req, res) => {
     const { userId, formName } = req.body;
     const { dashboardId } = req.params; // Extract dashboardId from the URL
 
-    if (!dashboardId || !formName || !userId) {
-        return res.status(400).json({ message: 'Dashboard Id, form name, and user ID are required' });
+    if (!dashboardId) {
+        return res.status(400).json({ message: "Dashboard ID is required" });
     };
+
+    // if (!dashboardId || !formName || !userId) {
+    //     return res.status(400).json({ message: 'Dashboard Id, form name, and user ID are required' });
+    // };
 
     try {
         //          Find the dashboard by ID
