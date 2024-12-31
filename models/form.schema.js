@@ -8,9 +8,9 @@ const formSchema = new mongoose.Schema({
         unique: true
     },
     userId: {
-            type: mongoose.Schema.Types.ObjectId, 
-            ref: 'User', 
-            required: true 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'User', 
+        required: true 
     },
     dashboardId: { 
         type: mongoose.Schema.Types.ObjectId, 

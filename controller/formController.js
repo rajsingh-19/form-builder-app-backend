@@ -6,13 +6,9 @@ const createForm = async (req, res) => {
     const { userId, formName } = req.body;
     const { dashboardId } = req.params; // Extract dashboardId from the URL
 
-    if (!dashboardId) {
-        return res.status(400).json({ message: "Dashboard ID is required" });
+    if (!dashboardId || !formName || !userId) {
+        return res.status(400).json({ message: 'Dashboard Id, form name, and user ID are required' });
     };
-
-    // if (!dashboardId || !formName || !userId) {
-    //     return res.status(400).json({ message: 'Dashboard Id, form name, and user ID are required' });
-    // };
 
     try {
         //          Find the dashboard by ID
@@ -20,6 +16,14 @@ const createForm = async (req, res) => {
         if (!dashboard) {
             return res.status(404).json({ message: 'Dashboard not found' });
         }
+
+        // Check if the user is the owner of the dashboard
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({ message: 'Invalid userId' });
+        }
+
+        console.log('dashboard.owner:', dashboard.owner);
+        console.log('userId:', userId);
 
         // Check if the user is the owner or has edit access
         if (dashboard.owner.toString() !== userId) {
@@ -40,6 +44,7 @@ const createForm = async (req, res) => {
 
         res.status(201).json(form);     // Respond with the created form
     } catch (error) {
+        console.error('Error creating form:', error);  // Log error
         res.status(500).json({ message: 'Error creating form', error });
     }
 };
