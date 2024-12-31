@@ -4,8 +4,8 @@ const Dashboard = require('../models/dashboard.schema');
 
 // Create Form
 const createForm = async (req, res) => {
-    const { dashboardId } = req.params; // Extract dashboardId from the URL
     const { userId, formName, folderId = null } = req.body;
+    const { dashboardId } = req.params; // Extract dashboardId from the URL
 
     if (!dashboardId || !formName || !userId) {
         return res.status(400).json({ message: 'Dashboard Id, form name, and user ID are required' });

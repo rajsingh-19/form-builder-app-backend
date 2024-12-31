@@ -12,6 +12,11 @@ const formSchema = new mongoose.Schema({
         ref: 'Dashboard', 
         required: true 
     },
+    folderId: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Folder',        // Assuming you have a Folder model to reference
+        default: null          // A form might not always belong to a folder
+    },
     bubbles: [{
         type: String,                   // Text-based bubbles or URL images
         content: { 
