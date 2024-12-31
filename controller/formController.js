@@ -26,7 +26,7 @@ const createForm = async (req, res) => {
         const form = new FormModel({ name: formName, dashboardId });
         await form.save();              // Save the form
 
-        dashboard.forms.push({formId: form._id, name: formName}); // Link the form to the dashboard
+        dashboard.forms.push({name: formName}); // Link the form to the dashboard
         await dashboard.save();         // Save the updated dashboard
 
         res.status(201).json(form);     // Respond with the created form
