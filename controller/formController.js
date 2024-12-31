@@ -3,11 +3,11 @@ const Dashboard = require('../models/dashboard.schema');
 
 // Create Form
 const createForm = async (req, res) => {
-    const { userId, formName } = req.body;
+    const { formName } = req.body;
     const { dashboardId } = req.params; // Extract dashboardId from the URL
 
-    if (!dashboardId || !formName || !userId) {
-        return res.status(400).json({ message: 'Dashboard Id, form name, and user ID are required' });
+    if (!dashboardId || !formName) {
+        return res.status(400).json({ message: 'Dashboard Id, form name are required' });
     };
 
     try {
@@ -17,18 +17,13 @@ const createForm = async (req, res) => {
             return res.status(404).json({ message: 'Dashboard not found' });
         }
 
-        // Check if the user is the owner or has edit access
-        // if (dashboard.owner.toString() !== userId.toString()) {
-        //     return res.status(403).json({ message: 'Access denied' });
-        // }
-
         // Ensure form name is unique within this dashboard
         if (dashboard.forms.some(form => form.name === formName)) {
             return res.status(400).json({ message: 'Form name must be unique within this dashboard' });
         }
 
         // Create the form object
-        const form = new FormModel({ name: formName, userId, dashboardId });
+        const form = new FormModel({ name: formName, dashboardId });
         await form.save();              // Save the form
 
         dashboard.forms.push({formId: form._id, formName: form.name}); // Link the form to the dashboard
