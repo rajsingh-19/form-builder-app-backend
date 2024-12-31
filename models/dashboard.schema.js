@@ -39,7 +39,7 @@ const dashboardSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId, 
             ref: 'Form' 
         },
-        formName: { 
+        name: { 
             type: String,
             required:  true
         }
