@@ -19,11 +19,16 @@ const createForm = async (req, res) => {
         }
 
         // Check if the user is the owner or has edit access
-        if (dashboard.owner.toString() !== userId) {
+        if (dashboard.owner.toString() !== userId && !dashboard.collaborators.some(collab => collab.userId.toString() === userId && collab.accessMode === 'edit')) {
             return res.status(403).json({ message: 'Access denied' });
         }
 
-        // Ensure folder name is unique within this dashboard
+        // Ensure form name is unique within this dashboard
+        if (dashboard.forms.some(form => form.formName === formName)) {
+            return res.status(400).json({ message: 'Form name must be unique within this dashboard' });
+        }
+
+        // Ensure form name is unique within this dashboard
         if (dashboard.forms.some(form => form.name === formName)) {
             return res.status(400).json({ message: 'Form name must be unique' });
         }
@@ -47,7 +52,7 @@ const createForm = async (req, res) => {
 
         await form.save();              // Save the form
 
-        dashboard.forms.push(form._id); // Link the form to the dashboard
+        dashboard.forms.push({formId: form._id, formName}); // Link the form to the dashboard
         await dashboard.save();         // Save the updated dashboard
 
         res.status(201).json(form);     // Respond with the created form
