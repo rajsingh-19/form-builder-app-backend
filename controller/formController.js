@@ -1,10 +1,9 @@
 const FormModel = require('../models/form.schema');
-const FolderModel = require('../models/folder.schema'); 
 const Dashboard = require('../models/dashboard.schema');
 
 // Create Form
 const createForm = async (req, res) => {
-    const { userId, formName, folderId = null } = req.body;
+    const { userId, formName } = req.body;
     const { dashboardId } = req.params; // Extract dashboardId from the URL
 
     if (!dashboardId || !formName || !userId) {
@@ -19,40 +18,20 @@ const createForm = async (req, res) => {
         }
 
         // Check if the user is the owner or has edit access
-        if (dashboard.owner.toString() !== userId && !dashboard.collaborators.some(collab => collab.userId.toString() === userId && collab.accessMode === 'edit')) {
+        if (dashboard.owner.toString() !== userId) {
             return res.status(403).json({ message: 'Access denied' });
         }
 
         // Ensure form name is unique within this dashboard
-        if (dashboard.forms.some(form => form.formName === formName)) {
+        if (dashboard.forms.some(form => form.name === formName)) {
             return res.status(400).json({ message: 'Form name must be unique within this dashboard' });
         }
 
-        // Ensure form name is unique within this dashboard
-        if (dashboard.forms.some(form => form.name === formName)) {
-            return res.status(400).json({ message: 'Form name must be unique' });
-        }
-
-        let form;
-        
-        // If a folderId is provided, associate the form with that folder
-        if (folderId) {
-            const folder = await FolderModel.findById(folderId);
-            if (!folder) {
-                return res.status(404).json({ message: 'Folder not found' });
-            }
-
-            form = new FormModel({ name: formName, dashboardId, folderId });
-            folder.forms.push(form._id); // Link the form to the folder
-            await folder.save();
-        } else {
-            // If no folderId is provided, create the form without associating it to any folder
-            form = new FormModel({ name: formName, dashboardId });
-        }
-
+        // Create the form object
+        const form = new FormModel({ name: formName, userId, dashboardId });
         await form.save();              // Save the form
 
-        dashboard.forms.push({formId: form._id, formName}); // Link the form to the dashboard
+        dashboard.forms.push({formId: form._id, formName: form.name}); // Link the form to the dashboard
         await dashboard.save();         // Save the updated dashboard
 
         res.status(201).json(form);     // Respond with the created form
