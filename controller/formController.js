@@ -88,6 +88,12 @@ const deleteForm = async (req, res) => {
         dashboard.forms.splice(formIndex, 1);
         await dashboard.save();
 
+        // Check if the form exists in the form model
+        const deleteFormInFormModel = await FormModel.findByIdAndDelete(formId);
+        if(!deleteFormInFormModel) {
+            return res.status(404).json({ message: "Form not found in the form collection" });
+        }
+        
         res.status(201).json({ message: 'Form deleted successfully' });
     } catch (error) {
         console.error('Error deleting form:', error);
