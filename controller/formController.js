@@ -66,6 +66,11 @@ const deleteForm = async (req, res) => {
     const { formId } = req.params;
     const { dashboardId } = req.body;
 
+    // Check if the formId is provided
+    if(!formId) {
+        return res.status(404).json({ message: 'FormId not found' });
+    };
+
     try {
         // Check if the dashboard exists
         const dashboard = await Dashboard.findById(dashboardId);
@@ -73,13 +78,8 @@ const deleteForm = async (req, res) => {
             return res.status(404).json({ message: 'Dashboard not found' });
         }
 
-        // Check if the formId is provided
-        if(!formId) {
-            return res.status(404).json({ message: 'FormId not found' });
-        }
-
         // Find the form and remove it from the dashboard
-        const formIndex = dashboard.forms.findIndex(form => form._id.toString() === formId);
+        const formIndex = dashboard.forms.findIndex(form => form.formId.toString() === formId);
         if (formIndex === -1) {
             return res.status(404).json({ message: 'Form not found in dashboard' });
         }
