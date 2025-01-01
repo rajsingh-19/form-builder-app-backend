@@ -3,7 +3,7 @@ const Dashboard = require('../models/dashboard.schema');
 
 // Create Form
 const createForm = async (req, res) => {
-    const { formName } = req.body;
+    const { formName, folderId } = req.body;
     const { dashboardId } = req.params; // Extract dashboardId from the URL
 
     // Validate required parameters
@@ -28,23 +28,33 @@ const createForm = async (req, res) => {
             return res.status(400).json({ message: 'Form name must be unique' });
         }
 
-        // Create a new ObjectId to use in both places
-        const customFormId = new mongoose.Types.ObjectId();
+        // Create the form object to be added to the dashboard
+        const newForm = { 
+            name: formName,
+            folderId: folderId || null,  // Link to a folder if provided, otherwise null
+            bubbles: [],  // Empty initially, will be populated later
+            inputs: [],   // Empty initially, will be populated later
+        };
 
-        // Create the form 
-        const form = new FormModel({ customId: customFormId, name: formName, dashboardId });
-        await form.save(); // Save the form in the database
-
-        // Link the form to the dashboard
-        dashboard.forms.push({ formId: form.customId, name: formName });
+        // If a folderId is provided, add the form to the corresponding folder
+        if (folderId) {
+            const folder = dashboard.folders.find(f => f._id.toString() === folderId);
+            if (!folder) {
+                return res.status(400).json({ message: 'Folder not found' });
+            }
+            folder.forms.push(newForm);
+        } else {
+            // If no folderId, add the form to the general forms array
+            dashboard.forms.push(newForm);
+        }
 
         await dashboard.save(); // Save the updated dashboard
 
         // Return the updated dashboard or the new form as a response
-        res.status(201).json({ message: 'Form created successfully', form, dashboardId });
+        res.status(201).json({ message: 'Form created successfully', newForm, dashboardId });
     } catch (error) {
         console.error('Error creating form:', error);
-        res.status(500).json({ message: 'Error creating form', error });
+        res.status(500).json({ message: 'Error creating form', error: error.message });
     }
 };
 
@@ -82,7 +92,7 @@ const deleteForm = async (req, res) => {
         }
 
         // Find the form and remove it from the dashboard
-        const formIndex = dashboard.forms.findIndex(form => form.formId.toString() === formId);
+        const formIndex = dashboard.forms.findIndex(form => form._id.toString() === formId);
         if (formIndex === -1) {
             return res.status(404).json({ message: 'Form not found in dashboard' });
         }
@@ -90,12 +100,6 @@ const deleteForm = async (req, res) => {
         // Remove the folder
         dashboard.forms.splice(formIndex, 1);
         await dashboard.save();
-
-        // Check if the form exists in the form model
-        const deleteFormInFormModel = await FormModel.findByIdAndDelete(formId);
-        if(!deleteFormInFormModel) {
-            return res.status(404).json({ message: "Form not found in the form collection" });
-        }
 
         res.status(201).json({ message: 'Form deleted successfully' });
     } catch (error) {

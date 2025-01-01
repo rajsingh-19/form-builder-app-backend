@@ -1,5 +1,4 @@
 const Dashboard = require('../models/dashboard.schema');
-const FolderModel = require('../models/folder.schema');
 const FormModel = require('../models/form.schema');
 
 //              Create a new folder inside a dashboard
@@ -30,19 +29,19 @@ const createFolder = async (req, res) => {
             return res.status(400).json({ message: 'Folder name must be unique' });
         }
 
-        // Create the folder object
-        const folder = new FolderModel({ name: folderName, dashboardId, forms: [] });
-        await folder.save(); // Save the folder in the database
+        // Create a new folder object and add it directly into the dashboard's folders array
+        const newFolder = { name: folderName, forms: [] };
+        // await folder.save(); // Save the folder in the database
 
         // Link the folder to the dashboard
-        dashboard.folders.push({ folderId: folder._id, name: folderName });
+        dashboard.folders.push(newFolder);
         await dashboard.save(); // Save the updated dashboard
 
         // Return the updated dashboard or the new folder as a response
-        res.status(201).json({ message: 'Form created successfully', folder, dashboardId });
+        res.status(201).json({ message: 'Form created successfully', newFolder, dashboardId });
     } catch (error) {
         console.error('Error creating folder:', error);
-        res.status(500).json({ message: 'Error creating folder', error:"error.message" });
+        res.status(500).json({ message: 'Error creating folder', error: error.message });
     }
 };
 
