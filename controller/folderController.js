@@ -117,24 +117,15 @@ const deleteFolder = async (req, res) => {
             return res.status(404).json({ message: 'FolderId not found' });
         }
 
-        // Convert the folderId to an ObjectId for comparison
-        const folderObjectId = mongoose.Types.ObjectId(folderId);
-
         // Find the folder and remove it from the dashboard
-        const folderIndex = dashboard.folders.findIndex(folder => folder._id.toString() === folderObjectId.toString());
+        const folderIndex = dashboard.folders.findIndex(folder => folder._id.toString() === folderId);
         if (folderIndex === -1) {
             return res.status(404).json({ message: 'Folder not found' });
         }
 
-        // Get the folder object to delete it from the folder collection
-        const folderToDelete = dashboard.folders[folderIndex];
-
         // Remove the folder
         dashboard.folders.splice(folderIndex, 1);
         await dashboard.save();
-
-        // Delete the folder from the Folder collection
-        await FolderModel.findByIdAndDelete(folderToDelete._id);
 
         res.status(201).json({ message: 'Folder deleted successfully' });
     } catch (error) {
