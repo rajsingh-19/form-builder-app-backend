@@ -29,14 +29,14 @@ const createForm = async (req, res) => {
         }
 
         // Create a new ObjectId to use in both places
-        const formId = new mongoose.Types.ObjectId();
+        const customFormId = new mongoose.Types.ObjectId();
 
         // Create the form 
-        const form = new FormModel({  _id: formId, name: formName, dashboardId });
+        const form = new FormModel({ customId: customFormId, name: formName, dashboardId });
         await form.save(); // Save the form in the database
 
         // Link the form to the dashboard
-        dashboard.forms.push({ formId: form._id, name: formName });
+        dashboard.forms.push({ formId: form.customId, name: formName });
 
         await dashboard.save(); // Save the updated dashboard
 
