@@ -1,13 +1,19 @@
 const Dashboard = require('../models/dashboard.schema');
+const FolderModel = require('../models/folder.schema');
 const FormModel = require('../models/form.schema');
 
 //              Create a new folder inside a dashboard
 const createFolder = async (req, res) => {
-    const { userId, folderName } = req.body;          // Extract folder name and user Id from request body
+    const { folderName } = req.body;          // Extract folder name and user Id from request body
     const { dashboardId } = req.params; // Extract dashboardId from the URL
     
     if (!dashboardId) {
         return res.status(400).json({ message: "Dashboard ID is required" });
+    };
+
+    // Check if the formId is provided
+    if(!folderName) {
+        return res.status(404).json({ message: 'Folder name not found' });
     };
 
     //          Try Catch block for error handling 
@@ -18,24 +24,22 @@ const createFolder = async (req, res) => {
             return res.status(404).json({ message: 'Dashboard not found' });
         }
 
-        // Check if the user is the owner or has edit access
-        if (dashboard.owner.toString() !== userId) {
-            return res.status(403).json({ message: 'Access denied' });
-        }
-
-        // Ensure folder name is unique within this dashboard
-        if (dashboard.folders.some(folder => folder.name === folderName)) {
+        // Ensure folder name is unique 
+        const isFolderNameUnique = dashboard.folders.some(folder => folder.name === folderName);
+        if (isFolderNameUnique) {
             return res.status(400).json({ message: 'Folder name must be unique' });
         }
 
-        // Create folder and add it to the dashboard
-        const newFolder = { name: folderName, userId, forms: [] };
-        dashboard.folders.push(newFolder);
-        // Save the dashboard with the new folder
-        await dashboard.save();
+        // Create the folder object
+        const folder = new FolderModel({ name: folderName, dashboardId });
+        await folder.save(); // Save the folder in the database
+
+        // Link the folder to the dashboard
+        dashboard.folders.push({ folderId: folder._id, name: folderName });
+        await dashboard.save(); // Save the updated dashboard
 
         // Return the updated dashboard or the new folder as a response
-        res.status(201).json(newFolder); // Sends the new folder back to the client
+        res.status(201).json({ message: 'Form created successfully', folder, dashboardId });
     } catch (error) {
         console.error('Error creating folder:', error);
         res.status(500).json({ message: 'Error creating folder', error:"error.message" });
@@ -84,7 +88,6 @@ const addFormToFolder = async (req, res) => {
 //              Get all folders for the user
 const getFolders = async (req, res) => {
     const { dashboardId } = req.params; // Get the dashboard ID from the URL
-    const userId = req.user.id;           // Get the user ID from the authenticated user (stored in req.user)
     //          Try Catch block for error handling 
     try {
         const dashboard = await Dashboard.findById(dashboardId);
@@ -92,12 +95,7 @@ const getFolders = async (req, res) => {
             return res.status(404).json({ message: 'Dashboard not found' });
         }
 
-        // Check if the user has access to the dashboard
-        if (dashboard.owner.toString() !== userId) {
-            return res.status(403).json({ message: 'Access denied' });
-        }
-
-        res.status(200).json(dashboard.folders); // Return the folders inside the dashboard
+        res.status(201).json(dashboard.folders); // Return the folders inside the dashboard
     } catch (error) {
         res.status(500).json({ message: 'Error fetching folders', error });
     }
@@ -106,7 +104,7 @@ const getFolders = async (req, res) => {
 //              Delete a folder by ID
 const deleteFolder = async (req, res) => {
     const { dashboardId, folderId } = req.params;       // Extract dashboardId and folderId from the URL
-    const userId = req.user.id;            
+
     //          Try Catch block for error handling 
     try {
         const dashboard = await Dashboard.findById(dashboardId);
@@ -114,9 +112,9 @@ const deleteFolder = async (req, res) => {
             return res.status(404).json({ message: 'Dashboard not found' });
         }
 
-        // Check if the user has access to the dashboard
-        if (dashboard.owner.toString() !== userId) {
-            return res.status(403).json({ message: 'Access denied' });
+        // Check if the folderId is provided
+        if(!folderId) {
+            return res.status(404).json({ message: 'FolderId not found' });
         }
 
         // Find the folder and remove it from the dashboard
@@ -129,10 +127,10 @@ const deleteFolder = async (req, res) => {
         dashboard.folders.splice(folderIndex, 1);
         await dashboard.save();
 
-            res.status(201).json({ message: 'Folder deleted successfully' });
-        } catch (error) {
-            res.status(500).json({ message: 'Error deleting folder', error });
-        }
+        res.status(201).json({ message: 'Folder deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting folder', error });
+    }
 };
 
 module.exports = { createFolder, addFormToFolder, getFolders, deleteFolder };

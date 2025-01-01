@@ -22,10 +22,10 @@ const createForm = async (req, res) => {
             return res.status(404).json({ message: 'Dashboard not found' });
         }
 
-        // Ensure form name is unique within this dashboard
+        // Ensure form name is unique 
         const isFormNameUnique = dashboard.forms.some(form => form.name === formName);
         if (isFormNameUnique) {
-            return res.status(400).json({ message: 'Form name must be unique within this dashboard' });
+            return res.status(400).json({ message: 'Form name must be unique' });
         }
 
         // Create the form object
@@ -36,11 +36,8 @@ const createForm = async (req, res) => {
         dashboard.forms.push({ formId: form._id, name: formName });
         await dashboard.save(); // Save the updated dashboard
 
-        res.status(201).json({
-            message: 'Form created successfully',
-            form,
-            dashboardId,
-        });
+        // Return the updated dashboard or the new form as a response
+        res.status(201).json({ message: 'Form created successfully', form, dashboardId });
     } catch (error) {
         console.error('Error creating form:', error);
         res.status(500).json({ message: 'Error creating form', error });
@@ -50,9 +47,14 @@ const createForm = async (req, res) => {
 // Get all forms for a dashboard
 const getForms = async (req, res) => {
     const { dashboardId } = req.params;
-    try {
-        const forms = await FormModel.find({ dashboardId });
-        res.status(200).json(forms);
+    //          Try Catch block for error handling 
+    try{
+        const dashboard = await Dashboard.findById(dashboardId);
+        if (!dashboard) {
+            return res.status(404).json({ message: 'Dashboard not found' });
+        }
+
+        res.status(201).json(dashboard.folders); // Return the forms inside the dashboard
     } catch (error) {
         res.status(500).json({ message: 'Error fetching forms', error });
     }
@@ -75,12 +77,6 @@ const deleteForm = async (req, res) => {
             return res.status(404).json({ message: 'FormId not found' });
         }
 
-        // Check if the form exists in the forms collection
-        // const form = await FormModel.findById(formId);
-        // if (!form) {
-        //     return res.status(404).json({ message: 'Form not found' });
-        // }
-
         // Find the form and remove it from the dashboard
         const formIndex = dashboard.forms.findIndex(form => form._id.toString() === formId);
         if (formIndex === -1) {
@@ -90,9 +86,6 @@ const deleteForm = async (req, res) => {
         // Remove the folder
         dashboard.forms.splice(formIndex, 1);
         await dashboard.save();
-
-        // Delete the actual form from the forms collection
-        // await form.remove();
 
         res.status(201).json({ message: 'Form deleted successfully' });
     } catch (error) {
