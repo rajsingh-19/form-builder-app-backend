@@ -28,8 +28,11 @@ const createForm = async (req, res) => {
             return res.status(400).json({ message: 'Form name must be unique' });
         }
 
+        // Create a new ObjectId to use in both places
+        const formId = new mongoose.Types.ObjectId();
+
         // Create the form 
-        const form = new FormModel({ name: formName, dashboardId });
+        const form = new FormModel({  _id: formId, name: formName, dashboardId });
         await form.save(); // Save the form in the database
 
         // Link the form to the dashboard
@@ -93,7 +96,7 @@ const deleteForm = async (req, res) => {
         if(!deleteFormInFormModel) {
             return res.status(404).json({ message: "Form not found in the form collection" });
         }
-        
+
         res.status(201).json({ message: 'Form deleted successfully' });
     } catch (error) {
         console.error('Error deleting form:', error);
