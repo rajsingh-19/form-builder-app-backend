@@ -1,9 +1,8 @@
-const FormModel = require('../models/form.schema');
 const Dashboard = require('../models/dashboard.schema');
 
 // Create Form
 const createForm = async (req, res) => {
-    const { formName, folderId } = req.body;
+    const { formName } = req.body;
     const { dashboardId } = req.params; // Extract dashboardId from the URL
 
     // Validate required parameters
@@ -31,23 +30,12 @@ const createForm = async (req, res) => {
         // Create the form object to be added to the dashboard
         const newForm = { 
             name: formName,
-            folderId: folderId || null,  // Link to a folder if provided, otherwise null
             bubbles: [],  // Empty initially, will be populated later
             inputs: [],   // Empty initially, will be populated later
         };
 
-        // If a folderId is provided, add the form to the corresponding folder
-        if (folderId) {
-            const folder = dashboard.folders.find(f => f._id.toString() === folderId);
-            if (!folder) {
-                return res.status(400).json({ message: 'Folder not found' });
-            }
-            folder.forms.push(newForm);
-        } else {
-            // If no folderId, add the form to the general forms array
-            dashboard.forms.push(newForm);
-        }
-
+        // Add the form to the general forms array (no folderId handling)
+        dashboard.forms.push(newForm);
         await dashboard.save(); // Save the updated dashboard
 
         // Return the updated dashboard or the new form as a response
