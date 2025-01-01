@@ -2,11 +2,6 @@ const mongoose = require('mongoose');
 
 //          defining the form schema
 const formSchema = new mongoose.Schema({
-    customId: {                            // Custom ID field
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        unique: true
-    },
     name: { 
         type: String, 
         required: true, 
