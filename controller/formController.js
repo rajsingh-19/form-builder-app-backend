@@ -34,7 +34,7 @@ const createForm = async (req, res) => {
 
         // Link the form to the dashboard
         dashboard.forms.push({ formId: form._id, name: formName });
-        
+
         await dashboard.save(); // Save the updated dashboard
 
         // Return the updated dashboard or the new form as a response
@@ -78,24 +78,15 @@ const deleteForm = async (req, res) => {
             return res.status(404).json({ message: 'FormId not found' });
         }
 
-        // Convert the formId to an ObjectId for comparison
-        const formObjectId = mongoose.Types.ObjectId(formId);
-
         // Find the form and remove it from the dashboard
-        const formIndex = dashboard.forms.findIndex(form => form._id.toString() === formObjectId.toString());
+        const formIndex = dashboard.forms.findIndex(form => form._id.toString() === formId);
         if (formIndex === -1) {
             return res.status(404).json({ message: 'Form not found in dashboard' });
         }
 
-        // Get the form object to delete it from the form collection
-        const formToDelete = dashboard.forms[formIndex];
-
         // Remove the folder
         dashboard.forms.splice(formIndex, 1);
         await dashboard.save();
-
-        // Delete the form from the Form collection
-        await FormModel.findByIdAndDelete(formToDelete._id);
 
         res.status(201).json({ message: 'Form deleted successfully' });
     } catch (error) {
