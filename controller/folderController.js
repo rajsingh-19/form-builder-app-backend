@@ -1,5 +1,4 @@
 const Dashboard = require('../models/dashboard.schema');
-const FormModel = require('../models/form.schema');
 
 //              Create a new folder inside a dashboard
 const createFolder = async (req, res) => {
@@ -48,39 +47,51 @@ const createFolder = async (req, res) => {
 // Add a form to an existing folder
 const addFormToFolder = async (req, res) => {
     const { dashboardId, folderId } = req.params; // Extract dashboardId and folderId from URL
-    const { formId } = req.body;
-    const userId = req.user.id;
+    const { formName } = req.body;
+
+    // Validate required parameters
+    if (!formName) {
+        return res.status(400).json({ message: 'Form name is required' });
+    };
+
+    if (!dashboardId || !folderId) {
+        return res.status(400).json({ message: 'Dashboard ID and Folder ID are required' });
+    };
 
     try {
         const dashboard = await Dashboard.findById(dashboardId);
         if (!dashboard) {
             return res.status(404).json({ message: 'Dashboard not found' });
-        }
-
-        // Check if the user is the owner or has edit access
-        if (dashboard.owner.toString() !== userId) {
-            return res.status(403).json({ message: 'Access denied' });
-        }
+        };
 
         // Find the folder
         const folder = dashboard.folders.id(folderId);
         if (!folder) {
             return res.status(404).json({ message: 'Folder not found' });
-        }
+        };
 
-        // Find the form by formId
-        const form = await FormModel.findById(formId);
-        if (!form) {
-            return res.status(404).json({ message: 'Form not found' });
-        }
- 
-        // Add the form to the folder
-        folder.forms.push(form._id);
-        await dashboard.save();
+        // Ensure form name is unique within that folder
+        const isFormNameUnique = folder.forms.some(form => form.name === formName);
+        if (isFormNameUnique) {
+            return res.status(400).json({ message: 'Form name must be unique within this folder' });
+        };
 
-        res.status(200).json(folder);
+        // Create the form object
+        const newForm = {
+            name: formName,
+            bubbles: [],    // Empty initially, will be populated later
+            inputs: [],     // Empty initially, will be populated later
+        };
+
+        // Add the form to the folder's forms array
+        folder.forms.push(newForm);
+        await dashboard.save(); // Save the updated dashboard with the new form
+
+        // Return the updated folder or the new form as a response
+        res.status(201).json({ message: 'Form created inside folder successfully', newForm, folder });
     } catch (error) {
-        res.status(500).json({ message: 'Error adding form to folder', error });
+        console.error('Error creating form inside folder:', error);
+        res.status(500).json({ message: 'Error creating form inside folder', error: error.message });
     }
 };
 

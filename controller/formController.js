@@ -62,15 +62,14 @@ const getForms = async (req, res) => {
     }
 };
 
-// Delete a form by ID
+//  Delete the form with the formId
 const deleteForm = async (req, res) => {
     const { formId } = req.params;
     const { dashboardId } = req.body;
 
-    // Check if the formId is provided
-    if(!formId) {
+    if (!formId) {
         return res.status(404).json({ message: 'FormId not found' });
-    };
+    }
 
     try {
         // Check if the dashboard exists
@@ -79,17 +78,32 @@ const deleteForm = async (req, res) => {
             return res.status(404).json({ message: 'Dashboard not found' });
         }
 
-        // Find the form and remove it from the dashboard
+        // Try deleting the form from the forms array (outside folders)
         const formIndex = dashboard.forms.findIndex(form => form._id.toString() === formId);
-        if (formIndex === -1) {
-            return res.status(404).json({ message: 'Form not found in dashboard' });
+        if (formIndex !== -1) {
+            dashboard.forms.splice(formIndex, 1); // Remove form from forms array
+        } else {
+            // Try deleting from the folders
+            let formFound = false;
+            for (let i = 0; i < dashboard.folders.length; i++) {
+                const folder = dashboard.folders[i];
+                const formIndexInFolder = folder.forms.findIndex(form => form._id.toString() === formId);
+                if (formIndexInFolder !== -1) {
+                    folder.forms.splice(formIndexInFolder, 1); // Remove form from the folder
+                    formFound = true;
+                    break;
+                }
+            }
+
+            if (!formFound) {
+                return res.status(404).json({ message: 'Form not found in folders' });
+            }
         }
 
-        // Remove the folder
-        dashboard.forms.splice(formIndex, 1);
+        // Save the dashboard after modifications
         await dashboard.save();
-
         res.status(201).json({ message: 'Form deleted successfully' });
+
     } catch (error) {
         console.error('Error deleting form:', error);
         res.status(500).json({ message: 'Error deleting form', error });
