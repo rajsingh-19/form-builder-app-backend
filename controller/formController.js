@@ -28,12 +28,14 @@ const createForm = async (req, res) => {
             return res.status(400).json({ message: 'Form name must be unique' });
         }
 
-        // Create the form object
-        const form = new FormModel({ name: formName, dashboardId });
-        await form.save(); // Save the form in the database
+        // Create the form object directly as part of the dashboard
+        const newForm = { name: formName, formId: new mongoose.Types.ObjectId() };
+
+        // Add the new form to the dashboard's forms array
+        dashboard.forms.push(newForm);
 
         // Link the form to the dashboard
-        dashboard.forms.push({ formId: form._id, name: formName });
+        // dashboard.forms.push({ formId: form._id, name: formName });
         await dashboard.save(); // Save the updated dashboard
 
         // Return the updated dashboard or the new form as a response
