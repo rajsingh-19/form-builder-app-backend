@@ -129,7 +129,7 @@ const deleteFolder = async (req, res) => {
         dashboard.folders.splice(folderIndex, 1);
         await dashboard.save();
 
-            res.status(200).json({ message: 'Folder deleted successfully' });
+            res.status(201).json({ message: 'Folder deleted successfully' });
         } catch (error) {
             res.status(500).json({ message: 'Error deleting folder', error });
         }

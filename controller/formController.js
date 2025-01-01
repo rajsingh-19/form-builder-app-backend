@@ -76,10 +76,10 @@ const deleteForm = async (req, res) => {
         }
 
         // Check if the form exists in the forms collection
-        const form = await FormModel.findById(formId);
-        if (!form) {
-            return res.status(404).json({ message: 'Form not found' });
-        }
+        // const form = await FormModel.findById(formId);
+        // if (!form) {
+        //     return res.status(404).json({ message: 'Form not found' });
+        // }
 
         // Find the form and remove it from the dashboard
         const formIndex = dashboard.forms.findIndex(form => form._id.toString() === formId);
@@ -92,9 +92,9 @@ const deleteForm = async (req, res) => {
         await dashboard.save();
 
         // Delete the actual form from the forms collection
-        await form.remove();
+        // await form.remove();
 
-        res.status(200).json({ message: 'Form deleted successfully' });
+        res.status(201).json({ message: 'Form deleted successfully' });
     } catch (error) {
         console.error('Error deleting form:', error);
         res.status(500).json({ message: 'Error deleting form', error });
