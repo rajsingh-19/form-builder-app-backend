@@ -31,17 +31,17 @@ const createFolder = async (req, res) => {
         }
 
         // Create the form object directly as part of the dashboard
-        const newFolder = { name: folderName, folderId: new mongoose.Types.ObjectId() };
+        // const newFolder = { name: folderName, folderId: new mongoose.Types.ObjectId() };
 
         // Add the new form to the dashboard's forms array
-        dashboard.folders.push(newFolder);
+        // dashboard.folders.push(newFolder);
 
         // Create the folder object
-        // const folder = new FolderModel({ name: folderName, dashboardId });
-        // await folder.save(); // Save the folder in the database
+        const folder = new FolderModel({ name: folderName, dashboardId });
+        await folder.save(); // Save the folder in the database
 
         // Link the folder to the dashboard
-        // dashboard.folders.push({ folderId: folder._id, name: folderName });
+        dashboard.folders.push({ folderId: folder._id, name: folderName });
         await dashboard.save(); // Save the updated dashboard
 
         // Return the updated dashboard or the new folder as a response
