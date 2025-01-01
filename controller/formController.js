@@ -6,33 +6,44 @@ const createForm = async (req, res) => {
     const { formName } = req.body;
     const { dashboardId } = req.params; // Extract dashboardId from the URL
 
+    // Validate required parameters
+    if (!formName) {
+        return res.status(400).json({ message: 'Form name is required' });
+    }
+
     if (!dashboardId) {
-        return res.status(400).json({ message: 'Dashboard Id is required' });
-    };
+        return res.status(400).json({ message: 'Dashboard ID is required' });
+    }
 
     try {
-        //          Find the dashboard by ID
+        // Find the dashboard by ID
         const dashboard = await Dashboard.findById(dashboardId);
         if (!dashboard) {
             return res.status(404).json({ message: 'Dashboard not found' });
         }
 
         // Ensure form name is unique within this dashboard
-        if (dashboard.forms.some(form => form.name === formName)) {
+        const isFormNameUnique = dashboard.forms.some(form => form.name === formName);
+        if (isFormNameUnique) {
             return res.status(400).json({ message: 'Form name must be unique within this dashboard' });
         }
 
         // Create the form object
         const form = new FormModel({ name: formName, dashboardId });
-        await form.save();              // Save the form
+        await form.save(); // Save the form in the database
 
-        dashboard.forms.push({name: formName}); // Link the form to the dashboard
-        await dashboard.save();         // Save the updated dashboard
+        // Link the form to the dashboard
+        dashboard.forms.push({ formId: form._id, name: formName });
+        await dashboard.save(); // Save the updated dashboard
 
-        res.status(201).json(form);     // Respond with the created form
+        res.status(201).json({
+            message: 'Form created successfully',
+            form,
+            dashboardId,
+        });
     } catch (error) {
-        console.error('Error creating form:', error);  // Log error
-        res.status(500).json({ message: 'Error creating form' });
+        console.error('Error creating form:', error);
+        res.status(500).json({ message: 'Error creating form', error });
     }
 };
 
