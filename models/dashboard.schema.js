@@ -32,8 +32,7 @@ const dashboardSchema = new mongoose.Schema({
         forms: [{
             name: { 
                 type: String,
-                required: true, // Form name is now required within the folder
-                unique: true
+                required: true // Form name is now required within the folder
             },
             bubbles: [{
                 type: String,                   // Text-based bubbles or URL images
