@@ -27,8 +27,7 @@ const dashboardSchema = new mongoose.Schema({
     folders: [{
         name: {
             type: String,
-            required: true,
-            unique: true
+            required: true
         },
         forms: [{
             name: { 
