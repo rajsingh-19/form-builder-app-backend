@@ -1,6 +1,7 @@
 const Dashboard = require('../models/dashboard.schema');
 const UserModel = require('../models/user.schema');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 
 // Create Dashboard
 const createDashboard = async (req, res) => {
