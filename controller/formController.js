@@ -62,6 +62,55 @@ const getForms = async (req, res) => {
     }
 };
 
+//  Get a form by id 
+const getFormById = async (req, res) => {
+    const { formId, dashboardId, folderId } = req.params;
+    
+    // Validate the form ID parameter 
+    if(!formId) {
+        return res.status(404).json({ message: "Form Id is required "});
+    };
+    
+    // Validate the dashboard ID parameter
+    if(!dashboardId) {
+        return res.status(404).json({ message: "Dashboard Id is required "});
+    };
+
+    try {
+        const dashboard = await Dashboard.findById(dashboardId);
+        if(!dashboard) {
+            return res.status(404).json({ message: "Dashboard not found "});
+        };
+
+        // Check if the form exists in the dashboard forms
+        let requiredForm = dashboard.forms.find(form => form._id.toString() === formId);
+        
+        if (requiredForm) {
+            return res.status(200).json(requiredForm); // Form found in dashboard.forms
+        };
+
+        // If no folderId is provided, form must be in dashboard.forms
+        if (!folderId) {
+            return res.status(404).json({ message: "Form not found in dashboard" });
+        };
+            
+        const folder = dashboard.folders.find(folder => folder._id.toString() === folderId);
+        if(folder) {
+            const requiredForm = folder.forms.find(form => form._id.toString() === formId);
+            if(requiredForm) {
+                return res.status(200).json(requiredForm);
+            } else {
+                return res.status(404).json({ message: "Form not found in folder" });
+            }
+        } else {
+            return res.status(404).json({ message: "Folder not found" });
+        }
+    } catch (error) {
+        console.error("Error getting the form", error);
+        res.status(500).json({ message: 'Error fetchin form', error });
+    }
+}; 
+
 //  Delete the form with the formId
 const deleteForm = async (req, res) => {
     const { formId } = req.params;
@@ -102,7 +151,7 @@ const deleteForm = async (req, res) => {
 
         // Save the dashboard after modifications
         await dashboard.save();
-        res.status(201).json({ message: 'Form deleted successfully' });
+        res.status(200).json({ message: 'Form deleted successfully' });
 
     } catch (error) {
         console.error('Error deleting form:', error);
@@ -110,4 +159,4 @@ const deleteForm = async (req, res) => {
     }
 };
 
-module.exports = { createForm, getForms, deleteForm };
+module.exports = { createForm, getForms, getFormById, deleteForm };
