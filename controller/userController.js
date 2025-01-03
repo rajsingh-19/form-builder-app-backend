@@ -1,7 +1,36 @@
 const bcrypt = require('bcrypt');
 const UserModel = require('../models/user.schema');
 
-// Update user settings
+//     Get the user by email
+const getUserByEmail = async (req, res) => {
+    const { email } = req.params;
+    try {
+      // Find the user by email
+      const user = await UserModel.findOne({ email });
+      // If user is found, send success response with userId
+      if (user) {
+        return res.status(200).json({
+          success: true,
+          userId: user._id,
+          message: 'User found successfully',
+        });
+      } else {
+        // If user is not found, send failure response
+        return res.status(200).json({
+          success: false,
+          message: 'User not found',
+        });
+      }
+    } catch (error) {
+      // Handle any errors during the process
+      return res.status(500).json({
+        success: false,
+        message: 'An error occurred: ' + error.message,
+      });
+    }
+};
+
+//      Update user data
 const updateUser = async (req, res) => {
     const { userName, email, oldPassword, newPassword } = req.body;     // Extract the username, email old and new password from request body
     const userId = req.user.id;                         // Get the user ID from the authenticated user (stored in req.user)
@@ -56,4 +85,4 @@ const updateUser = async (req, res) => {
     }
 };
 
-module.exports = updateUser;
+module.exports = { updateUser, getUserByEmail };

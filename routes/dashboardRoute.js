@@ -9,10 +9,13 @@ const router = express.Router();
 router.post('/create', authMiddleware, dashboardController.createDashboard);
 
 // Fetch Dashboard by userId (for the frontend to show the user's name in the navbar)
-router.get('/:userId', authMiddleware, dashboardController.getDashboardByUserId);
+router.get('/get/:userId', authMiddleware, dashboardController.getDashboardByUserId);
+router.get('/:userId', authMiddleware, dashboardController.getDashboardByOwnerId);
 
 // Share Dashboard (Generate Invite Link)
 router.post('/share/invite-link', authMiddleware, dashboardController.shareDashboard);
+// share dashboard by id
+router.post('/shareDashboard/:userId/:dashboardId', dashboardController.shareDashboardByUserId);
 
 // Validate invite link
 router.get('/invite/:token', dashboardController.validateInviteLink);

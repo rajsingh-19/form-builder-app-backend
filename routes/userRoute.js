@@ -1,7 +1,7 @@
 const express = require("express");
 const authMiddleware = require('../middleware/authMiddleware'); // Authentication middleware
 const { registerHandler, loginHandler } = require("../controller/authController");          // Importing controllers
-const updateUser = require("../controller/userController"); // Update user controller
+const { updateUser, getUserByEmail } = require("../controller/userController"); // Update user controller
 
 const router = express.Router();
 
@@ -11,6 +11,7 @@ router.post('/login', loginHandler);            // POST route for user login, ha
 
 // Update User Settings
 router.put('/update', authMiddleware, updateUser); // PUT route for updating user settings
+router.get('/getUser/:email', getUserByEmail);
 
 router.post('/logout', (req, res) => {
     // Log out by clearing the token in the frontend (client-side)
